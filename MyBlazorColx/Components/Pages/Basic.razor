@@ -1,0 +1,25 @@
+﻿@page "/basic"
+@rendermode InteractiveServer
+<h2 class="text-xl font-semibold">Basic Features</h2>
+<input @bind="task" placeholder="Enter task" class="border p-2" />
+<button @onclick="AddTask" class="btn btn-primary">Add</button>
+<ul>
+    @foreach (var t in tasks)
+    {
+        <li>@t</li>
+    }
+</ul>
+
+@code {
+    private string task = string.Empty;
+    private List<string> tasks = new();
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(task))
+        {
+            tasks.Add(task);
+            task = string.Empty;
+        }
+    }
+}

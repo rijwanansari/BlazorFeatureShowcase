@@ -1,0 +1,14 @@
+﻿@using static MyBlazorColx.Components.Pages.Example1
+<ul>
+    @if (Products != null)
+    {
+        foreach (var p in Products)
+        {
+            <li>@p.Name - $@p.Price</li>
+        }
+    }
+</ul>
+
+@code {
+[Parameter] public List<Product> Products { get; set; } = new();  // Initialize to avoid null reference
+}

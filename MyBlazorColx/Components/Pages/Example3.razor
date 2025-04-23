@@ -1,0 +1,23 @@
+﻿@page "/example3"
+@rendermode InteractiveServer
+<h2 class="text-xl font-semibold">Pro Features</h2>
+<p>This section can include charts, toast service, auth, etc.</p>
+<ChartPlaceholder />
+<ComplexGrid Data="gridData" />
+
+@code {
+    private List<ComplexData> gridData = new()
+    {
+        new() { Id = 1, Name = "Alice", Age = 30, Department = "HR" },
+        new() { Id = 2, Name = "Bob", Age = 35, Department = "Finance" },
+        new() { Id = 3, Name = "Charlie", Age = 28, Department = "IT" }
+    };
+
+    public class ComplexData
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public string Department { get; set; } = string.Empty;
+    }
+}

@@ -1,0 +1,28 @@
+﻿@using static MyBlazorColx.Components.Pages.Example3
+
+<table class="table-auto w-full border">
+    <thead>
+        <tr>
+            <th class="border px-4 py-2">ID</th>
+            <th class="border px-4 py-2">Name</th>
+            <th class="border px-4 py-2">Age</th>
+            <th class="border px-4 py-2">Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Data)
+        {
+            <tr>
+                <td class="border px-4 py-2">@item.Id</td>
+                <td class="border px-4 py-2">@item.Name</td>
+                <td class="border px-4 py-2">@item.Age</td>
+                <td class="border px-4 py-2">@item.Department</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public List<ComplexData> Data { get; set; } = new();
+}
+

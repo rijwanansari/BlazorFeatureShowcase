@@ -1,0 +1,132 @@
+﻿@page "/form-demo"
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+
+<h2 class="text-xl font-semibold mb-4">Interactive Form with Validation</h2>
+
+<EditForm Model="formModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-4">
+        <label class="block">Name:</label>
+        <InputText @bind-Value="formModel.Name" class="border p-2 w-full" />
+        <ValidationMessage For="() => formModel.Name" />
+    </div>
+
+    <div class="mb-4">
+        <label class="block">Email:</label>
+        <InputText @bind-Value="formModel.Email" class="border p-2 w-full" />
+        <ValidationMessage For="() => formModel.Email" />
+    </div>
+
+    <div class="mb-4">
+        <label class="block">Age:</label>
+        <InputNumber @bind-Value="formModel.Age" class="border p-2 w-full" />
+        <ValidationMessage For="() => formModel.Age" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">@((isEdit ? "Update" : "Save"))</button>
+</EditForm>
+
+@if (savedList.Any())
+{
+    <h3 class="mt-6 text-lg font-semibold">Saved Entries</h3>
+    <table class="table-auto w-full border mt-2">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border px-4 py-2">Name</th>
+                <th class="border px-4 py-2">Email</th>
+                <th class="border px-4 py-2">Age</th>
+                <th class="border px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in savedList)
+            {
+                <tr>
+                    <td class="border px-4 py-2">@entry.Name</td>
+                    <td class="border px-4 py-2">@entry.Email</td>
+                    <td class="border px-4 py-2">@entry.Age</td>
+                    <td class="border px-4 py-2">
+                        <button class="btn btn-primary" @onclick="() => EditEntry(entry)">Edit</button>
+                        <button class="btn btn-warning" @onclick="() => DeleteEntry(entry)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (submitted)
+{
+    <p class="mt-4 text-green-600 font-semibold">Thanks @formModel.Name! Your info has been submitted.</p>
+}
+
+@code {
+    private FormModel formModel = new();
+    private List<FormModel> savedList = new();
+    private bool submitted = false;
+    private bool isEdit = false;
+    private int editIndex = -1;
+
+    private void HandleValidSubmit()
+    {
+        submitted = true;
+
+        if (isEdit && editIndex >= 0 && editIndex < savedList.Count)
+        {
+            savedList[editIndex] = new FormModel
+            {
+                Name = formModel.Name,
+                Email = formModel.Email,
+                Age = formModel.Age
+            };
+            isEdit = false;
+            editIndex = -1;
+        }
+        else
+        {
+            savedList.Add(new FormModel
+            {
+                Name = formModel.Name,
+                Email = formModel.Email,
+                Age = formModel.Age
+            });
+        }
+
+        formModel = new();
+    }
+
+    private void EditEntry(FormModel entry)
+    {
+        formModel = new FormModel
+        {
+            Name = entry.Name,
+            Email = entry.Email,
+            Age = entry.Age
+        };
+        editIndex = savedList.IndexOf(entry);
+        isEdit = true;
+        submitted = false;
+    }
+
+    private void DeleteEntry(FormModel entry)
+    {
+        savedList.Remove(entry);
+        submitted = false;
+    }
+
+    public class FormModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; }
+
+        [Range(18, 99, ErrorMessage = "Age must be between 18 and 99")]
+        public int Age { get; set; }
+    }
+}

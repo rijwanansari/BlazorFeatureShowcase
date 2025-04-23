@@ -1,0 +1,24 @@
+﻿@page "/Example1"
+@using MyBlazorColx.Components.Shared
+<h2 class="text-xl font-semibold">Product Catalog</h2>
+<ProductList Products="products" />
+
+@code {
+    private List<Product> products = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500); // Simulate delay
+        products = new()
+        {
+            new() { Name = "Laptop", Price = 999.99 },
+            new() { Name = "Phone", Price = 499.99 }
+        };
+    }
+
+    public class Product
+    {
+        public string Name { get; set; } = string.Empty;
+        public double Price { get; set; }
+    }
+}

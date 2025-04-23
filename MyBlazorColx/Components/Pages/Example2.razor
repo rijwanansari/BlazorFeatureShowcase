@@ -1,0 +1,38 @@
+﻿@page "/example2"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.SignalR.Client
+
+<h2 class="text-xl font-semibold">Real-time Notifications (SignalR)</h2>
+<p>@notification</p>
+<button @onclick="SendNotification">Simulate Notification</button>
+
+@code {
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+    private string notification = "No notifications yet.";
+    private HubConnection hubConnection = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notifyHub"))
+            .Build();
+
+        hubConnection.On<string>("ReceiveNotification", message =>
+        {
+            notification = message;
+            //StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendNotification()
+    {
+        if (hubConnection != null)
+        {
+            await hubConnection.SendAsync("SendNotification", $"New message at {DateTime.Now}");
+        }
+    }
+
+    
+}
